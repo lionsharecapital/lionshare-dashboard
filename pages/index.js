@@ -11,7 +11,7 @@ const fetchData = async () => {
   try {
     const res = await fetch('https://lionshare-api.now.sh/api/prices');
     const data = await res.json();
-    return data;
+    return data.data;
   } catch (e) {
     console.error(e);
     return null;
@@ -25,14 +25,17 @@ export default class extends React.Component {
     };
   }
 
+  state = {}
+
   componentDidMount = () => {
     setInterval(async () => {
-      this.setState({ data: await fetchData() });
+      const data = await fetchData();
+      if (data) this.setState({ data });
     }, 10 * 1000);
   }
 
   get priceListData() {
-    return _.map(this.props.data.data, (data, key) => {
+    return _.map(this.state.data || this.props.data, (data, key) => {
       const color = constants[`currency${key}`];
       const historic = [];
       for (let rate of data.historic) {
