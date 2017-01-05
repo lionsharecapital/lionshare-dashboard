@@ -1,0 +1,26 @@
+{
+  "name": "lionshare-web",
+  "version": "1.0.0",
+  "description": "Large 🦁",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint **/*.js",
+    "deploy": "now && now alias"
+  },
+  "now": {
+    "alias": "liondash.now.sh"
+  },
+  "dependencies": {
+    "chart.js": "1.1.1",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.4",
+    "next": "2.0.0-beta.13",
+    "react-chartjs": "^0.8.0",
+    "reflexbox": "^2.2.3",
+    "styled-components": "^1.2.1"
+  }
+}
