@@ -7,7 +7,7 @@ injectGlobal`
   display: none;
 }
 
-html, body {
+html, body, #__next {
   height: 100%;
   cursor: default;
 }
@@ -20,6 +20,10 @@ body {
   line-height: 1.5;
   color: #fff;
   background-color: #000;
+}
+
+body > div {
+  height: 100%;
 }
 
 a {

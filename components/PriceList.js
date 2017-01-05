@@ -9,7 +9,7 @@ import CurrencyColor from './CurrencyColor';
 
 const PriceList = ({ assets }) => (
   <Flex auto>
-    <Flex auto column>
+    <Flex auto column justify="space-between" style={{ marginRight: '60px', padding: '6% 0' }}>
       { assets.slice(0,3).map(asset => (
         <AssetRow
           key={ asset.symbol }
@@ -17,7 +17,7 @@ const PriceList = ({ assets }) => (
         />
       )) }
     </Flex>
-    <Flex auto column>
+    <Flex auto column justify="space-between" style={{ padding: '6% 0' }}>
       { assets.slice(3,6).map(asset => (
         <AssetRow
           key={ asset.symbol }
@@ -69,19 +69,17 @@ const AssetRow = ({
           style={{ transition: 'opacity 0.25s ease' }}
           redraw
         />
-        <HighLow column justify="space-between">
-          <High justify="space-between">
-            <Label>H</Label>
-            <Amount>{ chartHigh }</Amount>
-          </High>
-          <Low justify="space-between">
-            <Label>L</Label>
-            <Amount>{ chartLow }</Amount>
-          </Low>
-          <Cap justify="space-between">
-            <Label>M</Label>
-            <Amount>15.4B</Amount>
-          </Cap>
+        <HighLow justify="flex-end">
+          <Flex column justify="space-between">
+            <High justify="space-between">
+              <Label>H</Label>
+              <Amount>{ chartHigh }</Amount>
+            </High>
+            <Low justify="space-between">
+              <Label>L</Label>
+              <Amount>{ chartLow }</Amount>
+            </Low>
+          </Flex>
         </HighLow>
       </Flex>
     </Row>
@@ -96,17 +94,6 @@ const Row = s(Flex)`
   & + .row {
     border-top: 1px solid ${ constants.darkGray };
   }
-
-  &:hover {
-    .chart {
-      opacity: 0.35;
-      transition: opacity 0.25s ease;
-    }
-    .highlow {
-      transform: translateX(0px);
-      transition: transform 0.25s ease;
-    }
-  }
 `;
 
 const Price = s.div`
@@ -119,11 +106,10 @@ const Direction = s.div`
 `;
 
 const HighLow = s(Flex)`
-  // width: 70px;
   padding-right: 15px;
   padding-left: 15px;
   font-size: 18px;
-  text-align: right;
+  width: 150px;
 `;
 
 const High = s(Flex)`

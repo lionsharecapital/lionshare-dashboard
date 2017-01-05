@@ -3,6 +3,7 @@ import fetch from 'isomorphic-fetch';
 import styled from 'styled-components';
 import '../styles';
 import constants from '../styles/constants';
+import { Flex } from 'reflexbox';
 
 import Header from '../components/Header';
 import PriceList from '../components/PriceList';
@@ -28,10 +29,16 @@ export default class extends React.Component {
   state = {}
 
   componentDidMount = () => {
+    // Re-fetch data every 10s
     setInterval(async () => {
       const data = await fetchData();
       if (data) this.setState({ data });
     }, 10 * 1000);
+
+    // Reload page every hour
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 60 * 60 * 1000);
   }
 
   get priceListData() {
@@ -62,7 +69,7 @@ export default class extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container column>
         <Header/>
         <PriceList assets={ this.priceListData } />
       </Container>
@@ -70,6 +77,7 @@ export default class extends React.Component {
   }
 }
 
-const Container = styled.div`
+const Container = styled(Flex)`
+  height: 100%;
   background-color: black;
 `;

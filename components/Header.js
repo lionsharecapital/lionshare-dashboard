@@ -14,4 +14,5 @@ const Header = s.div`
 
   font-size: 36px;
   font-weight: 600;
+  color: ${ constants.gray };
 `;
