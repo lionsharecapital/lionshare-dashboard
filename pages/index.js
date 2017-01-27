@@ -15,6 +15,8 @@ const SUPPORTED_CURRENCIES = [
   'ETH',
   'LTC',
   'REP',
+  'ZEC',
+  'XMR',
 ]
 
 const fetchData = async () => {
