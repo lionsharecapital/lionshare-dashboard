@@ -1,15 +1,25 @@
 import _ from 'lodash';
 import fetch from 'isomorphic-fetch';
 import styled from 'styled-components';
+import ReconnectingWebsocket from 'reconnecting-websocket';
 import '../styles';
 import constants from '../styles/constants';
 import { Flex } from 'reflexbox';
 
 import PriceList from '../components/PriceList';
 
+const WS_URL = 'wss://api.lionshare.capital';
+const API_URL = 'https://lionshare-api.now.sh/api/prices';
+const SUPPORTED_CURRENCIES = [
+  'BTC',
+  'ETH',
+  'LTC',
+  'REP',
+]
+
 const fetchData = async () => {
   try {
-    const res = await fetch('https://lionshare-api.now.sh/api/prices');
+    const res = await fetch(API_URL);
     const data = await res.json();
     return data.data;
   } catch (e) {
@@ -27,23 +37,34 @@ export default class extends React.Component {
 
   state = {
     websocketConnected: false,
+    prices: {},
+    data: null,
   }
 
   componentDidMount = () => {
-    // Re-fetch data every 10s
-    setInterval(async () => {
-      const data = await fetchData();
-      if (data) this.setState({ data });
-    }, 10 * 1000);
+    // Set initial server fetched data
+    this.setState({ data: this.props.data });
 
-    // Reload page every hour
-    setTimeout(() => {
-      window.location.reload(false);
-    }, 60 * 60 * 1000);
+    const websocket = new ReconnectingWebsocket(WS_URL, [], { debug: true });
+
+    // Handle updates from push events
+    websocket.addEventListener('message', message => {
+      const wsData = JSON.parse(message.data);
+      if (wsData && SUPPORTED_CURRENCIES.includes(wsData.cryptoCurrency)) {
+        const data = this.state.data;
+        data[data.cryptoCurrency].price = wsData.price;
+        this.setState({ data });
+      }
+    });
+
+    // Handle connection state
+    websocket.onopen = () => this.setState({ websocketConnected: true });
+    websocket.onclose = () => this.setState({ websocketConnected: false });
+    websocket.onerror = () => this.setState({ websocketConnected: false });
   }
 
   get priceListData() {
-    return _.map(this.state.data || this.props.data, (data, key) => {
+    return _.map(this.state.data, (data, key) => {
       const color = constants[`currency${key}`];
       const historic = [];
       for (let rate of data.historic) {
