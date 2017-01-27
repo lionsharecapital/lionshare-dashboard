@@ -5,7 +5,6 @@ import '../styles';
 import constants from '../styles/constants';
 import { Flex } from 'reflexbox';
 
-import Header from '../components/Header';
 import PriceList from '../components/PriceList';
 
 const fetchData = async () => {
@@ -70,7 +69,6 @@ export default class extends React.Component {
   render() {
     return (
       <Container column>
-        <Header/>
         <PriceList assets={ this.priceListData } />
       </Container>
     );
