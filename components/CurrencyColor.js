@@ -7,10 +7,9 @@ export default ({ color }) => (
 );
 
 const Container = s.div`
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
 
-  margin-top: 5px;
   margin-right: 11px;
 `;
