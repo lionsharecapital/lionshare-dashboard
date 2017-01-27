@@ -25,7 +25,9 @@ export default class extends React.Component {
     };
   }
 
-  state = {}
+  state = {
+    websocketConnected: false,
+  }
 
   componentDidMount = () => {
     // Re-fetch data every 10s
