@@ -20,6 +20,7 @@
     "lodash": "^4.17.4",
     "next": "2.0.0-beta.13",
     "react-chartjs": "^0.8.0",
+    "reconnecting-websocket": "^3.0.3",
     "reflexbox": "^2.2.3",
     "styled-components": "^1.2.1"
   }
