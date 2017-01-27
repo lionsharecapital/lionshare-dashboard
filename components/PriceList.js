@@ -13,11 +13,15 @@ const PriceList = ({ assets, currentAsset }) => {
   return (
     <ReactCSSTransitionGroup
       transitionName="assetPanel"
+      transitionEnterTimeout={1000}
+      transitionLeaveTimeout={1000}
     >
-      <AssetPanel
-        key={asset.symbol}
-        { ...asset }
-      />
+      {[
+        <AssetPanel
+          key={asset.symbol}
+          { ...asset }
+        />
+      ]}
     </ReactCSSTransitionGroup>
   );
 }
@@ -143,7 +147,9 @@ const Amount = s.span`
 `;
 
 const AssetPanelContainer = s.div`
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100vh;
   width: 100vw;
   padding: 16px;

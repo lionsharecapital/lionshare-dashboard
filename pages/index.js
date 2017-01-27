@@ -71,7 +71,7 @@ export default class extends React.Component {
       this.setState({
         currentAsset: (this.state.currentAsset + 1) % Object.keys(this.state.data).length
       })
-    }, 10000);
+    }, 5000);
 
     // Reload page every hour
     setTimeout(() => {
