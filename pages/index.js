@@ -33,7 +33,7 @@ const fetchData = async () => {
 export default class extends React.Component {
   static async getInitialProps ({ req }) {
     return req && {
-      data: await fetchData(),
+      data: await fetchData()
     };
   }
 
@@ -41,6 +41,7 @@ export default class extends React.Component {
     websocketConnected: false,
     prices: {},
     data: null,
+    currentAsset: 0
   }
 
   componentDidMount = () => {
@@ -54,7 +55,7 @@ export default class extends React.Component {
       const wsData = JSON.parse(message.data);
       if (wsData && SUPPORTED_CURRENCIES.includes(wsData.cryptoCurrency)) {
         const data = this.state.data;
-        data[data.cryptoCurrency].price = wsData.price;
+        data[wsData.cryptoCurrency].price = wsData.price;
         this.setState({ data });
       }
     });
@@ -63,6 +64,19 @@ export default class extends React.Component {
     websocket.onopen = () => this.setState({ websocketConnected: true });
     websocket.onclose = () => this.setState({ websocketConnected: false });
     websocket.onerror = () => this.setState({ websocketConnected: false });
+
+
+    // Cycle through the assets
+    setInterval(() => {
+      this.setState({
+        currentAsset: (this.state.currentAsset + 1) % Object.keys(this.state.data).length
+      })
+    }, 10000);
+
+    // Reload page every hour
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 60 * 60 * 1000);
   }
 
   get priceListData() {
@@ -94,7 +108,12 @@ export default class extends React.Component {
   render() {
     return (
       <Container column>
-        <PriceList assets={ this.priceListData } />
+        { this.state.data && Object.keys(this.state.data).length ? (
+          <PriceList
+            assets={ this.priceListData }
+            currentAsset={this.state.currentAsset}
+          />
+        ) : <div></div> }
       </Container>
     );
   }

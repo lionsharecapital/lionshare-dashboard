@@ -1,34 +1,28 @@
 import s from 'styled-components';
 import { Flex } from 'reflexbox';
 import { Line } from 'react-chartjs';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import constants from '../styles/constants';
 import { formatNumber } from '../utils/formatting';
 
 import CurrencyColor from './CurrencyColor';
 
-const PriceList = ({ assets }) => (
-  <Flex auto>
-    <Flex auto column justify="space-between" style={{ marginRight: '60px', padding: '6% 0' }}>
-      { assets.slice(0,3).map(asset => (
-        <AssetRow
-          key={ asset.symbol }
-          { ...asset }
-        />
-      )) }
-    </Flex>
-    <Flex auto column justify="space-between" style={{ padding: '6% 0' }}>
-      { assets.slice(3,6).map(asset => (
-        <AssetRow
-          key={ asset.symbol }
-          { ...asset }
-        />
-      )) }
-    </Flex>
-  </Flex>
-);
+const PriceList = ({ assets, currentAsset }) => {
+  const asset = assets[currentAsset];
+  return (
+    <ReactCSSTransitionGroup
+      transitionName="assetPanel"
+    >
+      <AssetPanel
+        key={asset.symbol}
+        { ...asset }
+      />
+    </ReactCSSTransitionGroup>
+  );
+}
 
-const AssetRow = ({
+const AssetPanel = ({
   symbol,
   color,
   price,
@@ -48,41 +42,48 @@ const AssetRow = ({
   const chartHigh = (Math.max(...chartData.datasets[0].data) / 100.0).toFixed(2);
   const chartLow = (Math.min(...chartData.datasets[0].data) / 100.0).toFixed(2);
 
+  const chartWidth = typeof window !== 'undefined' ? window.innerWidth : 500;
+  const chartHeight = typeof window !== 'undefined' ? window.innerHeight : 500;
+
   return (
-    <Row
-      align="center"
-      justify="space-between"
-    >
-      <Flex>
-        <CurrencyColor color={ color } />
-        { symbol }
-        <Flex column style={{ marginLeft: '15px' }}>
+    <AssetPanelContainer>
+      <CurrencyInformation>
+        <Flex align="center">
+          <CurrencyColor color={ color } />
+          <Symbol>{ symbol }</Symbol>
+        </Flex>
+        <Flex column>
           <Price>{ formatNumber(price, 'USD') }</Price>
           <Direction direction={ direction }>{ directionSymbol }{ change }%</Direction>
         </Flex>
-      </Flex>
-      <Flex align="center">
-        <Line
-          width="200"
-          height="42" data={ chartData }
-          options={ chartOptions }
-          style={{ transition: 'opacity 0.25s ease' }}
-          redraw
-        />
-        <HighLow justify="flex-end">
-          <Flex column justify="space-between">
-            <High justify="space-between">
-              <Label>H</Label>
-              <Amount>{ chartHigh }</Amount>
-            </High>
-            <Low justify="space-between">
-              <Label>L</Label>
-              <Amount>{ chartLow }</Amount>
-            </Low>
-          </Flex>
-        </HighLow>
-      </Flex>
-    </Row>
+      </CurrencyInformation>
+
+      <ChartLineContainer>
+        <ChartLine>
+          <Line
+            width={chartWidth}
+            height = {chartHeight}
+            data={ chartData }
+            options={ chartOptions }
+            style={{ transition: 'opacity 0.25s ease' }}
+            redraw
+          />
+        </ChartLine>
+      </ChartLineContainer>
+
+      <HighLow justify="flex-end">
+        <Flex column justify="space-between">
+          <High justify="space-between">
+            <Label>H</Label>
+            <Amount>{ chartHigh }</Amount>
+          </High>
+          <Low justify="space-between">
+            <Label>L</Label>
+            <Amount>{ chartLow }</Amount>
+          </Low>
+        </Flex>
+      </HighLow>
+    </AssetPanelContainer>
   );
 };
 
@@ -96,8 +97,13 @@ const Row = s(Flex)`
   }
 `;
 
+const Symbol = s.div`
+  font-size: 60px;
+  line-height: 1.2;
+`;
+
 const Price = s.div`
-  font-size: 36px;
+  font-size: 48px;
   line-height: 1.2;
 `;
 
@@ -106,10 +112,12 @@ const Direction = s.div`
 `;
 
 const HighLow = s(Flex)`
-  padding-right: 15px;
-  padding-left: 15px;
-  font-size: 18px;
+  position: absolute;
+  bottom: 20px;
+  right: 30px;
+  font-size: 36px;
   width: 150px;
+  z-index: 2;
 `;
 
 const High = s(Flex)`
@@ -133,5 +141,30 @@ const Label = s.span`
 const Amount = s.span`
 
 `;
+
+const AssetPanelContainer = s.div`
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  padding: 16px;
+`
+
+const ChartLineContainer = s.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+`
+
+const ChartLine = s.div`
+  transform: scale(0.9);
+`
+
+const CurrencyInformation = s.div`
+  z-index: 2;
+  position: relative;
+`
 
 export default PriceList;
